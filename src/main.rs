@@ -1,4 +1,4 @@
-#[macro_use] extern crate num_derive;
+#[macro_use]extern crate num_derive;
 
 use regex::Regex;
 
@@ -522,10 +522,15 @@ mod formats {
 
         #[derive(Debug, Serialize, Deserialize)]
         pub struct ItemTag {
+            #[serde(rename = "Color")]
             pub color: Option<i32>,
+            #[serde(rename = "Loot")]
             pub loot: Option<String>,
+            #[serde(rename = "Name")]
             pub name: Option<String>,
+            #[serde(rename = "Type")]
             pub _type: Option<String>,
+            #[serde(rename = "Damage")]
             pub damage: Option<i32>,
             pub icon: Option<String>,
         }
