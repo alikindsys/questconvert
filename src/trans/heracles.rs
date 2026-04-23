@@ -21,7 +21,7 @@ impl ftbquests::State {
                     // We don't actually need to load the contents of the dependencies until they actually appear.
                     for dep in deps {
                         if !id_map.contains_left(&dep) {
-                            id_map.insert(dep.clone(), new_id(dep));
+                            id_map.insert(dep.clone(), new_id(&dep));
                         }
                     }
 
@@ -34,7 +34,7 @@ impl ftbquests::State {
         }
 
         for (filename, quest) in state.quests {
-            let quest_id = new_id(filename.clone());
+            let quest_id = new_id(&filename);
 
             let _fquest = ftbquests::Quest {
                 id: quest_id.clone(),
@@ -53,7 +53,7 @@ impl ftbquests::State {
             };
 
             for (key, inner) in quest.display.groups {
-                id_map.insert(key.clone(), new_id(key.clone()));
+                id_map.insert(key.clone(), new_id(&key));
                 // We need to build a temporary map of which things go on each page
                 // And since the key of the display group is what pageId they'll go to
             }

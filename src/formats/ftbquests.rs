@@ -3,7 +3,7 @@ use std::hash::{DefaultHasher, Hash, Hasher};
 use serde::{Deserialize, Serialize};
 use topo_sort::TopoSort;
 
-pub fn new_id(old: String) -> String {
+pub fn new_id(old: &str) -> String {
     let mut s = DefaultHasher::new();
     old.hash(&mut s);
     format!("{:X}", s.finish())
