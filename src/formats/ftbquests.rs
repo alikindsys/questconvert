@@ -1,5 +1,6 @@
 use std::hash::{DefaultHasher, Hash, Hasher};
 
+use rand::prelude::*;
 use serde::{Deserialize, Serialize};
 use topo_sort::TopoSort;
 
@@ -7,6 +8,11 @@ pub fn new_id(old: &str) -> String {
     let mut s = DefaultHasher::new();
     old.hash(&mut s);
     format!("{:X}", s.finish())
+}
+
+pub fn random_id() -> String {
+    let mut rng = rand::rng();
+    format!("{:X}", rng.random::<u64>())
 }
 
 pub struct State {
