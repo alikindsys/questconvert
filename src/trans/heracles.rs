@@ -17,7 +17,7 @@ pub trait FromWithId<T>: Sized {
 }
 
 impl ftbquests::State {
-    pub fn from_heracles(state: heracles::State) -> Self {
+    pub fn from_heracles(mut state: heracles::State) -> Self {
         let _page_map: HashMap<String, HashSet<ftbquests::Quest>> = HashMap::new();
         let _quest_map: HashMap<String, ftbquests::Quest> = HashMap::new();
         let mut id_map: BiHashMap<String, String> = BiHashMap::new();
@@ -28,44 +28,51 @@ impl ftbquests::State {
                 Ok((key, deps)) => {
                     // Pre-generate all of the new keys for the dependencies.
                     // We don't actually need to load the contents of the dependencies until they actually appear.
+                    let mut dependencies = vec![];
+
                     for dep in deps {
                         if !id_map.contains_left(&dep) {
                             id_map.insert(dep.clone(), new_id(&dep));
+                            dependencies.push(new_id(&dep));
                         }
+                    }
+
+                    // Create and add the current task key.
+                    let current_id = new_id(&key);
+                    if !id_map.contains_left(&key) {
+                        id_map.insert(key.clone(), current_id.clone());
                     }
 
                     // Apply transformation on the quest itself.
                     // We need to know where that quest links to, and as a result, which "page" it is in.
-                    if let Some(_hquest) = state.quests.get(&key) {}
+                    if let Some(hquest) = state.quests.remove(&key) {
+                        if hquest.display.groups.len() <= 1 {
+                            let fquest = ftbquests::Quest {
+                                id: current_id,
+                                description: hquest.display.description,
+                                subtitle: hquest
+                                    .display
+                                    .subtitle
+                                    .and_then(|s| s.text.or(s.translate)),
+                                tasks: todo!(),
+                                title: todo!(),
+                                x: todo!(),
+                                y: todo!(),
+                                dependencies,
+                                rewards: todo!(),
+                                shape: todo!(),
+                                size: todo!(),
+                                hide_dependency_lines: todo!(),
+                                icon: todo!(),
+                            };
+                        } else {
+                            // HACK: Some quest may exist in multiple pages, so we will create distinct ids after
+                            // HACK: the first page, and duplicate the quests but prune the rewards.
+                        }
+                    }
                 }
                 Err(_cycle) => {}
             };
-        }
-
-        for (filename, quest) in state.quests {
-            let quest_id = new_id(&filename);
-
-            let _fquest = ftbquests::Quest {
-                id: quest_id.clone(),
-                description: quest.display.description,
-                subtitle: quest.display.subtitle.and_then(|s| s.text.or(s.translate)),
-                tasks: todo!(),
-                title: todo!(),
-                x: todo!(),
-                y: todo!(),
-                dependencies: todo!(),
-                rewards: todo!(),
-                shape: todo!(),
-                size: todo!(),
-                hide_dependency_lines: todo!(),
-                icon: todo!(),
-            };
-
-            for (key, inner) in quest.display.groups {
-                id_map.insert(key.clone(), new_id(&key));
-                // We need to build a temporary map of which things go on each page
-                // And since the key of the display group is what pageId they'll go to
-            }
         }
 
         unimplemented!()
